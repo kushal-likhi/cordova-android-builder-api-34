@@ -1,0 +1,32 @@
+name: Android Build
+
+on:
+  push:
+    branches:
+      - android  # Trigger this workflow on pushes to the "android" branch
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Android APK
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/opt/src \
+            -v ${{ github.workspace }}/build/android:/opt/src/platforms/android/app/build/outputs/apk \
+            kushallikhi/cordova-android-builder-api-34 \
+            cordova build android --release
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: android-apk
+          path: build/android/*.apk
+
