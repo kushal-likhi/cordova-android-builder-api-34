@@ -53,20 +53,28 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKERHUB_TOKEN }}"}')
 
-          # Extract the token from the response
-          token=$(echo $response | jq -r .token)
-
-          # Output the token for later use
-          echo "::set-output name=token::$token"
+          # Check if the response contains a token
+          if echo $response | jq -e .token > /dev/null; then
+            token=$(echo $response | jq -r .token)
+            echo "DOCKERHUB_TOKEN=$token" >> $GITHUB_ENV
+          else
+            echo "Failed to obtain authentication token. Response: $response"
+            exit 1
+          fi
 
       - name: Sync README to Docker Hub
         run: |
           # Read the content of README.md and escape it for JSON
           README_CONTENT=$(jq -Rs '.' README.md)
-          echo "${{ steps.dockerhub_auth.outputs.token }}"
+          echo "$DOCKERHUB_TOKEN"
 
           # Update Docker Hub repository description using the Docker Hub API
-          curl -X PATCH https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34/ \
-            -H "Authorization: Bearer ${{ steps.dockerhub_auth.outputs.token }}" \
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34/ \
+            -H "Authorization: Bearer $DOCKERHUB_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"full_description\": ${README_CONTENT}}"
+            -d "{\"full_description\": ${README_CONTENT}}")
+
+          if [ $response -ne 200 ]; then
+            echo "Failed to update README on Docker Hub. HTTP response code: $response"
+            exit 1
+          fi
