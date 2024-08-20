@@ -42,7 +42,7 @@ jobs:
       - name: Build and push Docker image
         if: env.skip == 'false'
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34:${{ env.VERSION }} .
+          docker build --build-arg VERSION=${{ env.VERSION }} -t ${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34:${{ env.VERSION }} .
           docker push ${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34:${{ env.VERSION }}
 
       - name: Sync README to Docker Hub
