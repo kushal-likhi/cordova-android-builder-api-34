@@ -1,0 +1,46 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract version from version file
+        id: get_version
+        run: |
+          VERSION=$(cat VERSION)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Check if the version is already published
+        id: version_check
+        run: |
+          if docker manifest inspect ${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34:${{ env.VERSION }} > /dev/null 2>&1; then
+            echo "Image with version ${{ env.VERSION }} already exists. Skipping build."
+            echo "skip=true" >> $GITHUB_ENV
+          else
+            echo "New version detected. Proceeding with build."
+            echo "skip=false" >> $GITHUB_ENV
+          fi
+
+      - name: Build and push Docker image
+        if: env.skip == 'false'
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/myicordova-android-builder-api-34:${{ env.VERSION }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34:${{ env.VERSION }}
