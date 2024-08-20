@@ -56,7 +56,7 @@ jobs:
           # Check if the response contains a token
           if echo $response | jq -e .token > /dev/null; then
             token=$(echo $response | jq -r .token)
-            echo "DOCKERHUB_RESP=$token" >> $GITHUB_ENV
+            echo "DOCKERHUB_AUTH_TOKEN=$token" >> $GITHUB_ENV
           else
             echo "Failed to obtain authentication token. Response: $response"
             exit 1
@@ -66,11 +66,11 @@ jobs:
         run: |
           # Read the content of README.md and escape it for JSON
           README_CONTENT=$(jq -Rs '.' README.md)
-          echo "$DOCKERHUB_RESP"
+          echo "${{env.DOCKERHUB_AUTH_TOKEN}}"
 
           # Update Docker Hub repository description using the Docker Hub API
           response=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34/ \
-            -H "Authorization: Bearer $DOCKERHUB_RESP" \
+            -H "Authorization: Bearer ${{env.DOCKERHUB_AUTH_TOKEN}}" \
             -H "Content-Type: application/json" \
             -d "{\"full_description\": ${README_CONTENT}}")
 
