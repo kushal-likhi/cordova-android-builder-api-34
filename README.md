@@ -116,7 +116,7 @@ docker run -it --rm kushallikhi/cordova-android-builder-api-34 sdkmanager --list
 
 | Version | Description                               | Date       |
 |---------|-------------------------------------------|------------|
-| 1.0.0   | Initial release with API Level 34 support | 2024-08-20 |
+| 10.9.4  | Initial release with API Level 34 support | 2024-08-20 |
 
 ## Contributing
 
