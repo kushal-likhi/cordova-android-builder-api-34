@@ -21,10 +21,7 @@ ARG ANDROID_CMDTOOLS_VERSION=11076708
 LABEL maintainer="kushal@codalien.com"
 LABEL description="Cordova Android Builder optimized for API Level 34"
 LABEL keywords="cordova, android, docker, api-level-34, mobile-app"
-
-# Set the version label using a RUN command
-RUN echo "Setting version label to $VERSION" && \
-    LABEL version=$VERSION
+LABEL version=$VERSION
 
 # Set the working directory inside the container
 WORKDIR /opt/src
