@@ -5,7 +5,6 @@ ARG VERSION
 ARG OPENJDK_VERSION=17
 
 # Set the version, maintainer, and description labels for the Docker image
-LABEL version=$VERSION
 LABEL maintainer="kushal@codalien.com"
 LABEL description="Cordova Android Builder optimized for API Level 34"
 LABEL keywords="cordova, android, docker, api-level-34, mobile-app"
@@ -22,6 +21,10 @@ ARG NODEJS_VERSION=20
 ARG GRADLE_VERSION=8.7
 ARG CORDOVA_VERSION=12.0.0
 ARG ANDROID_CMDTOOLS_VERSION=11076708
+
+# Set the version label using a RUN command
+RUN echo "Setting version label to $VERSION" && \
+    LABEL version=$VERSION
 
 # Set the working directory inside the container
 WORKDIR /opt/src
