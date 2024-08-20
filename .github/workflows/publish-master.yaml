@@ -51,7 +51,7 @@ jobs:
           # Authenticate with Docker Hub and get the Bearer token
           response=$(curl -s -X POST https://hub.docker.com/v2/users/login/ \
             -H "Content-Type: application/json" \
-            -d '{"username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKERHUB_TOKEN }}"}')
+            -d '{"username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DH_PASS }}"}')
 
           # Check if the response contains a token
           if echo $response | jq -e .token > /dev/null; then
@@ -66,7 +66,6 @@ jobs:
         run: |
           # Read the content of README.md and escape it for JSON
           README_CONTENT=$(jq -Rs '.' README.md)
-          echo "${{env.DOCKERHUB_AUTH_TOKEN}}"
 
           # Update Docker Hub repository description using the Docker Hub API
           response=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34/ \
