@@ -63,6 +63,7 @@ jobs:
         run: |
           # Read the content of README.md and escape it for JSON
           README_CONTENT=$(jq -Rs '.' README.md)
+          echo "${{ steps.dockerhub_auth.outputs.token }}"
 
           # Update Docker Hub repository description using the Docker Hub API
           curl -X PATCH https://hub.docker.com/v2/repositories/${{ secrets.DOCKER_USERNAME }}/cordova-android-builder-api-34/ \
