@@ -8,6 +8,7 @@ ARG OPENJDK_VERSION=17
 LABEL version=$VERSION
 LABEL maintainer="kushal@codalien.com"
 LABEL description="Cordova Android Builder optimized for API Level 34"
+LABEL keywords="cordova, android, docker, api-level-34, mobile-app"
 
 # Base image is Eclipse Temurin OpenJDK version specified by the OPENJDK_VERSION argument
 FROM eclipse-temurin:${OPENJDK_VERSION}
