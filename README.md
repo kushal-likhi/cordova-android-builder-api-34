@@ -86,6 +86,7 @@ You can extend this Docker image with your own custom configurations by creating
 FROM kushallikhi/cordova-android-builder-api-34
 
 # Add your custom steps here
+
 ```
 
 ### Installing Additional Android Packages
